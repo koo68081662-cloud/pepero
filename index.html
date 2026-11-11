@@ -3,75 +3,126 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 카카오톡 미리보기 설정 -->
   <meta property="og:title" content="[모바일 쿠폰] 누드 빼빼로 교환권이 도착했습니다." />
   <meta property="og:description" content="유효기간 내에 매장에서 교환해 주세요." />
-  <title>기프티콘 확인</title>
+  <title>모바일 교환권</title>
   <style>
     body {
-      font-family: 'Apple SD Gothic Neo', sans-serif;
-      background-color: #f5f5f5;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f7f7f7;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       margin: 0;
     }
-    .card {
+    .phone-frame {
       background: white;
-      width: 90%;
-      max-width: 350px;
-      padding: 25px;
-      border-radius: 16px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 380px;
+      padding: 30px 20px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
       text-align: center;
+      box-sizing: border-box;
     }
-    .title { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 5px; }
-    .subtitle { font-size: 14px; color: #888; margin-bottom: 20px; }
-    .barcode-box {
-      background: #fafafa;
-      border: 2px dashed #ddd;
-      padding: 20px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .barcode-box:active { transform: scale(0.98); }
-    .click-hint { font-size: 13px; color: #ff5722; font-weight: bold; }
+    .brand { font-size: 13px; color: #888; margin-bottom: 8px; font-weight: 500; }
+    .item-name { font-size: 20px; font-weight: bold; color: #222; margin-bottom: 25px; }
     
-    #surprise {
-      display: none;
-      margin-top: 20px;
+    .barcode-container {
+      background: #fafafa;
+      border: 2px dashed #e0e0e0;
+      padding: 25px 15px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
-    #surprise h2 { color: #d32f2f; font-size: 24px; margin-bottom: 10px; }
-    #surprise p { font-size: 16px; color: #555; }
+    .barcode-container:active {
+      transform: scale(0.97);
+      background-color: #f0f0f0;
+    }
+    .barcode-bars {
+      font-family: monospace;
+      font-size: 32px;
+      letter-spacing: 5px;
+      color: #111;
+      margin: 15px 0 10px 0;
+    }
+    .tap-text {
+      font-size: 13px;
+      color: #ff4757;
+      font-weight: bold;
+      animation: bounce 1s infinite alternate;
+    }
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-3px); }
+    }
+
+    /* 낚시 성공 화면 (처음엔 숨김) */
+    #prank-result {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .prank-emoji { font-size: 55px; margin-bottom: 15px; }
+    .prank-title { font-size: 22px; font-weight: bold; color: #ff3838; margin-bottom: 10px; }
+    .prank-desc { font-size: 15px; color: #555; line-height: 1.5; margin-bottom: 20px; }
+    .retry-btn {
+      background-color: #2f3542;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <div id="coupon-area">
-      <div class="title">🎁 빼빼로데이 선물 교환권</div>
-      <div class="subtitle">롯데 누드 빼빼로 1개</div>
+  <div class="phone-frame">
+    <!-- 진짜 쿠폰 화면 -->
+    <div id="coupon-view">
+      <div class="brand">🎁 카카오톡 선물하기 교환권</div>
+      <div class="item-name">롯데 누드 빼빼로 1개</div>
       
-      <div class="barcode-box" onclick="showSurprise()">
-        <p style="margin:0; font-size:12px; color:#666;">바코드를 터치하여 사용하세요</p>
-        <div style="font-family: monospace; font-size: 28px; letter-spacing: 4px; margin: 15px 0;">
-          ||||| | |||| ||| ||
-        </div>
-        <div class="click-hint">👉 [바코드 확대하여 보기]</div>
+      <div class="barcode-container" onclick="triggerPrank()">
+        <p style="margin:0; font-size:12px; color:#666;">바코드를 터치하여 사용처리 하세요</p>
+        <div class="barcode-bars">||||| ||| || ||||</div>
+        <div style="font-size: 12px; color: #333; margin-bottom: 5px;">9842-1092-3841</div>
+        <div class="tap-text">👆 [터치해서 바코드 인식하기]</div>
       </div>
+      
+      <p style="font-size: 11px; color: #aaa; margin-top: 25px;">
+        * 본 쿠폰은 지정된 매장에서 실물 상품으로 교환 가능합니다.
+      </p>
     </div>
 
-    <div id="surprise">
-      <h2>🎉 낚였지롱! 🤣</h2>
-      <p>빼빼로는 직접 사서 드세요~<br>메인 퀘스트 실패!</p>
+    <!-- 낚시 성공 화면 -->
+    <div id="prank-result">
+      <div class="prank-emoji">🤡</div>
+      <div class="prank-title">앗, 완벽하게 낚이셨습니다!</div>
+      <div class="prank-desc">
+        축하합니다! 친구의 장난에 속아 넘어가는<br>
+        <strong>'호구력 +1'</strong>이 적립되었습니다 🤣<br><br>
+        빼빼로는 직접 사서 드세요~ 메인퀘스트 실패!
+      </div>
+      <button class="retry-btn" onclick="location.reload()">억울하니까 다시 보기</button>
     </div>
   </div>
 
   <script>
-    function showSurprise() {
-      document.getElementById('coupon-area').style.display = 'none';
-      document.getElementById('surprise').style.display = 'block';
+    function triggerPrank() {
+      // 쿠폰 화면 숨기고 낚시 화면 보여주기
+      document.getElementById('coupon-view').style.display = 'none';
+      document.getElementById('prank-result').style.display = 'block';
     }
   </script>
 
